@@ -182,15 +182,14 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   float thrust = 0;
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-  float err = posZCmd - posZ;
-  float errDot  = velZCmd - velZ;
+  float zPosErr = posZCmd - posZ;
+  float zDotCmd = (kpPosZ * zPosErr) + velZCmd;
+  integratedAltitudeError += zPosErr*dt; 
 
-  float p = kpPosZ * err;
-  float d = kpVelZ * errDot;
+  zDotCmd = CONSTRAIN( zDotCmd, -maxDescentRate, maxAscentRate );
 
-  float accel = p + d + accelZCmd;
-  thrust = ( accel * mass ) / R(2,2);
-  thrust = CONSTRAIN( thrust, -maxDescentRate/dt, maxAscentRate/dt );
+  float zDotDot = kpVelZ * (zDotCmd - velZ) + accelZCmd + (KiPosZ * integratedAltitudeError);
+  thrust = -(zDotDot * mass) / R(2,2);
   /////////////////////////////// END STUDENT CODE ////////////////////////////
   
   return thrust;
@@ -256,7 +255,10 @@ float QuadControl::YawControl(float yawCmd, float yaw)
 
   float yawRateCmd=0;
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-
+  yawCmd = fmodf(yawCmd, 2.f*F_PI);
+  float yawErr = yawCmd - yaw;
+  yawErr = fmodf(yawErr, 2.f*F_PI);
+  yawRateCmd = kpYaw * yawErr;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 

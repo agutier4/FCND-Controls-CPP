@@ -23,6 +23,8 @@ bld/
 # CLion/IntelliJ IDEA
 .idea/
 
+# vim
+*.swp
 
 # manual cmake build ignores
 build/
