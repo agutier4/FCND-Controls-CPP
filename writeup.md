@@ -7,7 +7,7 @@ This first scenario is mostly just a test for the simulator to make sure everyth
 
 ### Scenario 2: Body Rate and Roll/Pitch Control
 ![Intro](img/scenerio2.png)
-The second scenario required setting up a routine to convert a thrust and set of x,y,z moments into the actual motor thrusts for each of the four motors. This is done in `QuadControl::GenerateMotorCommands()`. To do this, the force / torque equations were written using the defined constants and the four thrust value. This system of 4 linear equations can be represented as a matrix and then inverted to solve for each of the motor thrusts in terms of the inputs.
+The second scenario requires setting up a routine to convert a total thrust and set of x,y,z moments into the motor thrusts for each of the four motors. This is done in `QuadControl::GenerateMotorCommands()`. To do this, the force / torque equations were written using the defined constants and the four thrust values. This system of 4 linear equations can be represented as a matrix and then inverted to solve for each of the motor thrusts in terms of the inputs.
  
 The actual body rate routine is setup to generate the moment commands used above. This is done in `QuadControl::BodyRateControl()`. This process requires applying a simple proportional gain and multiplying the output by the respective moments of inertia to convert from angular accelerations to moments. The gains for this control loop (`kpPQR`) were tuned to minimize overshoot and get to the target rotation rate as quickly as possible.
 
@@ -32,13 +32,13 @@ The yaw control routine is also relatively straight forward proportional control
 ### Scenario 4: Non-idealities and robustness 
 ![Intro](img/scenerio4.png)
 
-For scenario 4, there were not new control loops implemented. Instead it was an opportunity to refine the tune for quads that are not modeled correctly by the code. The red quad is too heavy and the green has a different CG, a properly tuned control system is able to handle this be incorporating the feedback it gets from the onboard sensor. Each of these quads will move towards a target position straight ahead then hold its position and attitude.
+For scenario 4, no new control loops were added. Instead it was an opportunity to refine the tune making the system more robust. This is important when the quads have different physical properties than those modeled in the code. The red quad is too heavy and the green has an off center CG, a properly tuned control system is able to handle this be incorporating the feedback it gets from the onboard sensors. Each of these quads will move towards a target position straight ahead then hold its position and attitude.
 
 The only additional code added for this scenario is an integral term in the altitude control loop. This allows the quad to correct better for offsets from the target altitude. This is particularly useful in the case of the heavier quad since it tends to sit a little lower than the target position. With the addition of an integral term, the quad will accumulate error when it sits below the target and gradually increase thrust to go up.
 
 ### Scenario 5: Trajectory Following 
 ![Intro](img/scenerio5.png)
-Like the fourth scenario, there is no additional code added for this scenario just additional tuning. The quads have to fly in a figure 8 to hit a constantly moving target position in a predetermined trajectory. Because of the nature of the trajectory, this really requires an accurate tune as it will stress all of the control loops.
+Like the fourth scenario, there is no additional code added for this scenario just additional tuning. The quads have to fly in a figure-eight to hit a constantly moving target position in a pre-determined trajectory. Because of the nature of the trajectory, this really requires an accurate tune as it will stress all of the control loops.
 
 I found that my altitude gains were too high initially which ended up giving inconsistent thrust commands and this made everything much more difficult for the other loops since they often use thrust as an input.
 
