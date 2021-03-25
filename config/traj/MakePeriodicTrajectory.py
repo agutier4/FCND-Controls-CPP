@@ -26,7 +26,7 @@ with open('FigureEight.txt', 'w') as the_file:
 		vy = 0;
 		vz = 0;
 		######## BEGIN STUDENT CODE
-		
+
 		######## END STUDENT CODE
 		the_file.write("," + fmt(vx) + "," + fmt(vy) + "," + fmt(vz));
 		######## EXAMPLE SOLUTION
